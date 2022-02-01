@@ -10,7 +10,7 @@ hook.tap({ name: "tap2" }, (name, age) => {
 });
 hook.tap({ name: "tap3" }, (name, age) => {
   console.log("tap3", name, age);
-  return null;
+  return null; // 如果有返回值，且不等于 undefined(无返回值，其实也是 undefined)，就给下一个 tap 的第一个参数。
 });
 hook.tap({ name: "tap4" }, (name, age) => {
   console.log("tap4", name, age);

@@ -96,3 +96,10 @@ hook3.promise("gpd", "34").then((data) => {
   console.log(data);
   console.timeEnd("cost-tapPromise");
 });
+
+// -----output-------
+// tap1 gpd 34
+// tap2 gpd 34
+// tap3 gpd 34
+// undefined
+// cost-tapPromise: 3002.330ms

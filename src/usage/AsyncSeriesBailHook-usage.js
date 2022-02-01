@@ -42,7 +42,8 @@ hook2.tapAsync({ name: "tapAsync1" }, (name, age, callback) => {
 hook2.tapAsync({ name: "tapAsync2" }, (name, age, callback) => {
   setTimeout(() => {
     console.log("tapAsync2", name, age);
-    callback(null, "tapAsync2 callback");
+    // callback(null, undefined);
+    callback(null, "tapAsync2 callback"); // 到这就结束了
   }, 2000);
 });
 hook2.tapAsync({ name: "tapAsync3" }, (name, age, callback) => {
@@ -77,7 +78,7 @@ hook3.tapPromise({ name: "tapPromise2" }, (name, age) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       console.log("tapPromise2", name, age);
-      reject("tapPromise2 resolve");
+      reject("tapPromise2 reject"); // 到这就结束了！
     }, 2000);
   });
 });

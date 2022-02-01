@@ -44,7 +44,7 @@ hook2.tapAsync({ name: "tapAsync1" }, (name, age, callback) => {
 hook2.tapAsync({ name: "tapAsync2" }, (name, age, callback) => {
   setTimeout(() => {
     console.log("tapAsync2", name, age);
-    callback(null, "tapAsync2 callback"); // 如果 callback 里有值了，就直接返回了，这应该是个 bug?
+    callback(null, "tapAsync2 callback");
   }, 2000);
 });
 hook2.tapAsync({ name: "tapAsync3" }, (name, age, callback) => {

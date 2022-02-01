@@ -6,11 +6,11 @@ hook.tap({ name: "tap1" }, (name, age) => {
 });
 hook.tap({ name: "tap2" }, (name, age) => {
   console.log("tap2", name, age);
-  return 1;
+  return 1; // 无用
 });
 hook.tap({ name: "tap3" }, (name, age) => {
   console.log("tap3", name, age);
-  return undefined;
+  return undefined; // 无用
 });
 
 hook.call("gpd", "34");
