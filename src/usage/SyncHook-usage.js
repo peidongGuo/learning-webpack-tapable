@@ -1,4 +1,4 @@
-const { SyncHook } = require("tapable");
+const { SyncHook } = require("../tapable");
 const hook = new SyncHook(["name", "age"]);
 hook.tap({ name: "tap1" }, (name, age) => {
   console.log("tap1", name, age);
@@ -12,7 +12,7 @@ hook.tap({ name: "tap3" }, (name, age) => {
   console.log("tap3", name, age);
   return undefined;
 });
-
+debugger;
 hook.call("gpd", "34");
 
 // -----output-------
