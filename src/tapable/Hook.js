@@ -6,10 +6,18 @@ class Hook {
     this.args = args;
     this.taps = [];
     this.call = CALL_DELEGATE;
+    this.callAsync = CALL_ASYNC_DELEGATE;
+    this.promise = PROMISE_DELEGATE;
   }
 
   tap(options, fn) {
     this._tap("sync", options, fn);
+  }
+  tapAsync(options, fn) {
+    this._tap("async", options, fn);
+  }
+  tapPromise(options, fn) {
+    this._tap("promise", options, fn);
   }
   _tap(type, options, fn) {
     if (typeof options === "string") {
@@ -20,6 +28,8 @@ class Hook {
   }
   _resetCompilation() {
     this.call = CALL_DELEGATE; // 重置为原始的函数，准备重新编译
+    this.callAsync = CALL_ASYNC_DELEGATE;
+    this.promise = PROMISE_DELEGATE;
   }
   _insert(tapInfo) {
     this._resetCompilation();
@@ -41,6 +51,18 @@ class Hook {
 const CALL_DELEGATE = function (...args) {
   this.call = this._createCall("sync");
   return this.call(...args);
+};
+
+// 核心是懒的动态编译
+const CALL_ASYNC_DELEGATE = function (...args) {
+  this.callAsync = this._createCall("async");
+  return this.callAsync(...args);
+};
+
+// 核心是懒的动态编译
+const PROMISE_DELEGATE = function (...args) {
+  this.promise = this._createCall("promise");
+  return this.promise(...args);
 };
 
 module.exports = Hook;

@@ -1,29 +1,28 @@
-const { AsyncParallelHook } = require("tapable");
-const hook = new AsyncParallelHook(["name", "age"]);
-console.time("cost-tap");
-hook.tap({ name: "tap1" }, (name, age) => {
-  setTimeout(() => {
-    console.log("tap1", name, age);
-    return 1; // 无用
-  }, 1000);
-});
-hook.tap({ name: "tap2" }, (name, age) => {
-  setTimeout(() => {
-    console.log("tap2", name, age);
-    return 2; // 无用
-  }, 2000);
-});
-hook.tap({ name: "tap3" }, (name, age) => {
-  setTimeout(() => {
-    console.log("tap3", name, age);
-    return 3; // 无用
-  }, 3000);
-});
-
-hook.callAsync("gpd", "34", (err, data) => {
-  console.log(err, data);
-  console.timeEnd("cost-tap");
-});
+const { AsyncParallelHook } = require("../tapable");
+// const hook = new AsyncParallelHook(["name", "age"]);
+// console.time("cost-tap");
+// hook.tap({ name: "tap1" }, (name, age) => {
+//   setTimeout(() => {
+//     console.log("tap1", name, age);
+//     return 1; // 无用
+//   }, 1000);
+// });
+// hook.tap({ name: "tap2" }, (name, age) => {
+//   setTimeout(() => {
+//     console.log("tap2", name, age);
+//     return 2; // 无用
+//   }, 2000);
+// });
+// hook.tap({ name: "tap3" }, (name, age) => {
+//   setTimeout(() => {
+//     console.log("tap3", name, age);
+//     return 3; // 无用
+//   }, 3000);
+// });
+// hook.callAsync("gpd", "34", (err, data) => {
+//   console.log(err, data);
+//   console.timeEnd("cost-tap");
+// });
 
 // -----output-------
 // tap1 gpd 34
@@ -32,31 +31,31 @@ hook.callAsync("gpd", "34", (err, data) => {
 // undefined undefined
 // cost-tap: 5.069ms
 
-const hook2 = new AsyncParallelHook(["name", "age"]);
-console.time("cost-tapAsync");
-hook2.tapAsync({ name: "tap1" }, (name, age, callback) => {
-  setTimeout(() => {
-    console.log("tap1", name, age);
-    callback();
-  }, 1000);
-});
-hook2.tapAsync({ name: "tap2" }, (name, age, callback) => {
-  setTimeout(() => {
-    console.log("tap2", name, age);
-    callback();
-  }, 2000);
-});
-hook2.tapAsync({ name: "tap3" }, (name, age, callback) => {
-  setTimeout(() => {
-    console.log("tap3", name, age);
-    callback();
-  }, 3000);
-});
+// const hook2 = new AsyncParallelHook(["name", "age"]);
+// console.time("cost-tapAsync");
+// hook2.tapAsync({ name: "tap1" }, (name, age, callback) => {
+//   setTimeout(() => {
+//     console.log("tap1", name, age);
+//     callback();
+//   }, 1000);
+// });
+// hook2.tapAsync({ name: "tap2" }, (name, age, callback) => {
+//   setTimeout(() => {
+//     console.log("tap2", name, age);
+//     callback();
+//   }, 2000);
+// });
+// hook2.tapAsync({ name: "tap3" }, (name, age, callback) => {
+//   setTimeout(() => {
+//     console.log("tap3", name, age);
+//     callback();
+//   }, 3000);
+// });
 
-hook2.callAsync("gpd", "34", (err, data) => {
-  console.log(err, data);
-  console.timeEnd("cost-tapAsync");
-});
+// hook2.callAsync("gpd", "34", (err, data) => {
+//   console.log(err, data);
+//   console.timeEnd("cost-tapAsync");
+// });
 
 // -----output-------
 // tap1 gpd 34
