@@ -1,61 +1,61 @@
-const { AsyncSeriesHook } = require("tapable");
-const hook = new AsyncSeriesHook(["name", "age"]);
-console.time("cost-tap");
-hook.tap({ name: "tap1" }, (name, age) => {
-  setTimeout(() => {
-    console.log("tap1", name, age);
-    return 1; // 无用
-  }, 1000);
-});
-hook.tap({ name: "tap2" }, (name, age) => {
-  setTimeout(() => {
-    console.log("tap2", name, age);
-    return 2; // 无用
-  }, 2000);
-});
-hook.tap({ name: "tap3" }, (name, age) => {
-  setTimeout(() => {
-    console.log("tap3", name, age);
-    return 3; // 无用
-  }, 3000);
-});
+const { AsyncSeriesHook } = require("../tapable");
+// const hook = new AsyncSeriesHook(["name", "age"]);
+// console.time("cost-tap");
+// hook.tap({ name: "tap1" }, (name, age) => {
+//   setTimeout(() => {
+//     console.log("tap1", name, age);
+//     return 1; // 无用
+//   }, 1000);
+// });
+// hook.tap({ name: "tap2" }, (name, age) => {
+//   setTimeout(() => {
+//     console.log("tap2", name, age);
+//     return 2; // 无用
+//   }, 2000);
+// });
+// hook.tap({ name: "tap3" }, (name, age) => {
+//   setTimeout(() => {
+//     console.log("tap3", name, age);
+//     return 3; // 无用
+//   }, 3000);
+// });
 
-hook.callAsync("gpd", "34", (err, data) => {
-  console.log(err, data);
-  console.timeEnd("cost-tap");
-});
+// hook.callAsync("gpd", "34", (err, data) => {
+//   console.log(err, data);
+//   console.timeEnd("cost-tap");
+// });
 // -----output-------
 // cost-tap: 8.430ms
 // tap1 gpd 34
 // tap2 gpd 34
 // tap3 gpd 34
 
-const hook2 = new AsyncSeriesHook(["name", "age"]);
-console.time("cost-tapAsync");
-hook2.tapAsync({ name: "tapAsync1" }, (name, age, callback) => {
-  setTimeout(() => {
-    console.log("tapAsync1", name, age);
-    // callback("tapAsync1 callback");
-    callback(null, undefined); // 无用
-  }, 1000);
-});
-hook2.tapAsync({ name: "tapAsync2" }, (name, age, callback) => {
-  setTimeout(() => {
-    console.log("tapAsync2", name, age);
-    callback(null, "tapAsync2 callback"); //无用
-  }, 2000);
-});
-hook2.tapAsync({ name: "tapAsync3" }, (name, age, callback) => {
-  setTimeout(() => {
-    console.log("tapAsync3", name, age);
-    callback(null, "tapAsync3 callback"); // 无用
-  }, 3000);
-});
+// const hook2 = new AsyncSeriesHook(["name", "age"]);
+// console.time("cost-tapAsync");
+// hook2.tapAsync({ name: "tapAsync1" }, (name, age, callback) => {
+//   setTimeout(() => {
+//     console.log("tapAsync1", name, age);
+//     // callback("tapAsync1 callback");
+//     callback(null, undefined); // 无用
+//   }, 1000);
+// });
+// hook2.tapAsync({ name: "tapAsync2" }, (name, age, callback) => {
+//   setTimeout(() => {
+//     console.log("tapAsync2", name, age);
+//     callback(null, "tapAsync2 callback"); //无用
+//   }, 2000);
+// });
+// hook2.tapAsync({ name: "tapAsync3" }, (name, age, callback) => {
+//   setTimeout(() => {
+//     console.log("tapAsync3", name, age);
+//     callback(null, "tapAsync3 callback"); // 无用
+//   }, 3000);
+// });
 
-hook2.callAsync("gpd", "34", (err, data) => {
-  console.log(err, data);
-  console.timeEnd("cost-tapAsync");
-});
+// hook2.callAsync("gpd", "34", (err, data) => {
+//   console.log(err, data);
+//   console.timeEnd("cost-tapAsync");
+// });
 
 // -----output-------
 // tapAsync1 gpd 34

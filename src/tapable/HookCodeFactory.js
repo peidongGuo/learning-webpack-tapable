@@ -40,7 +40,8 @@ class HookCodeFactory {
     return code;
   }
 
-  callTapParallel() {
+  // TODO
+  callTapSeries2(onDone) {
     let code = "";
     let taps = this.options.taps;
     if (taps.length === 0) {
@@ -48,30 +49,29 @@ class HookCodeFactory {
     }
     switch (this.options.type) {
       case "async":
-        code += `let _counter=${taps.length};\n`;
-        code += `let _done=function(){_callback()};\n`;
-        for (let i = 0; i < taps.length; i++) {
-          code += this.callTap(i);
+        let current_async = onDone;
+        for (let i = taps.length - 1; i > -1; i--) {
+          let done = current_async;
+          code += `function next${i}(){\n`;
+          code += this.callTap(i, done) + "\n";
+          code += "}\n";
+          current_async = `next${i}`;
         }
+        code += "next0(); \n";
         break;
       case "promise":
-        code += `return new Promise(function (_resolve, _reject) {
-            var _sync = true;
-            function _error(_err) {
-              if (_sync)
-                _resolve(
-                  Promise.resolve().then(function () {
-                    throw _err;
-                  })
-                );
-              else _reject(_err);
-            }`;
-        code += `let _counter=${taps.length};\n`;
-        code += `let _done=function(){_resolve()};\n`;
-        for (let i = 0; i < taps.length; i++) {
-          code += this.callTap(i);
+        code += `return new Promise(function (_resolve, _reject) {   
+        `;
+        let current_promise = "_resolve";
+        for (let i = taps.length - 1; i > -1; i--) {
+          let done = current_promise;
+          code += `function next${i}(){\n`;
+          code += this.callTap(i, done) + "\n";
+          code += "}\n";
+          current_promise = `next${i}`;
         }
-        code += `_sync = false; \n });`;
+        code += "next0(); \n";
+        code += `})`;
         break;
       default:
         break;
@@ -80,7 +80,39 @@ class HookCodeFactory {
     return code;
   }
 
-  callTap(index) {
+  callTapParallel(onDone) {
+    let code = "";
+    let taps = this.options.taps;
+    if (taps.length === 0) {
+      return code;
+    }
+    switch (this.options.type) {
+      case "async":
+        code += `let _counter=${taps.length};\n`;
+        code += `let _done=function(){if(--_counter===0){${onDone}()}};\n`;
+        for (let i = 0; i < taps.length; i++) {
+          code += this.callTap(i, "_done");
+        }
+        break;
+      case "promise":
+        code += `return new Promise(function (_resolve, _reject) {
+            
+            `;
+        code += `let _counter=${taps.length};\n`;
+        code += `let _done=function(){if(--_counter===0){_resolve()}};\n`;
+        for (let i = 0; i < taps.length; i++) {
+          code += this.callTap(i, "_done");
+        }
+        code += `\n });`;
+        break;
+      default:
+        break;
+    }
+
+    return code;
+  }
+
+  callTap(index, onDone) {
     let code = "";
     switch (this.options.type) {
       case "sync":
@@ -90,32 +122,15 @@ class HookCodeFactory {
       case "async":
         code = `var _fn${index}=_x[${index}];\n`;
         code += `_fn${index}(${this.args()},function(){
-          if(--_counter===0){
-            _done();
-          }
+            ${onDone}();
         });\n`;
         break;
       case "promise":
         code += `var _fn${index} = _x[${index}];
-        var _hasResult${index} = false;
-        var _promise${index} = _fn${index}(name, age);
-        if (!_promise${index} || !_promise${index}.then)
-          throw new Error(
-            "Tap function (tapPromise) did not return promise (returned " +
-              _promise${index} +
-              ")"
-          );
+        var _promise${index} = _fn${index}(${this.args()});
         _promise${index}.then(
           function (_result${index}) {
-            _hasResult${index} = true;
-            if (--_counter === 0) _done();
-          },
-          function (_err${index}) {
-            if (_hasResult${index}) throw _err${index};
-            if (_counter > ${index}) {
-              _error(_err${index});
-              _counter = ${index};
-            }
+            ${onDone}(_result${index});
           }
         );`;
         break;
@@ -134,11 +149,14 @@ class HookCodeFactory {
       case "async":
         fn = new Function(
           this.args({ after: "_callback" }),
-          this.header() + this.content()
+          this.header() + this.content({ onDone: "_callback" })
         );
         break;
       case "promise":
-        fn = new Function(this.args(), this.header() + this.content());
+        fn = new Function(
+          this.args(),
+          this.header() + this.content({ onDone: "_callback" })
+        );
         break;
       default:
         break;
