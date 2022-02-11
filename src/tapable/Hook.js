@@ -45,7 +45,17 @@ class Hook {
   }
   _insert(tapInfo) {
     this._resetCompilation();
-    this.taps.push(tapInfo);
+    let { before, stage } = tapInfo;
+    let findIndex = this.taps.length;
+    for (let i = this.taps.length - 1; i > -1; i--) {
+      if (
+        stage < this.taps[i].stage ||
+        (before && before.indexOf(this.taps[i].name) > -1)
+      ) {
+        findIndex = i;
+      }
+    }
+    this.taps.splice(findIndex, 0, tapInfo);
   }
   _createCall(type) {
     return this.compile({

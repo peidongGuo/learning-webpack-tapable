@@ -1,4 +1,4 @@
-const { SyncHook } = require("tapable");
+const { SyncHook } = require("../tapable");
 const hook = new SyncHook(["name", "age"]);
 
 hook.tap({ name: "tap1", stage: 5 }, (name, age) => {
