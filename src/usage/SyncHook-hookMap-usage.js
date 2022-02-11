@@ -1,5 +1,4 @@
-const { HookMap } = require("tapable");
-const { SyncHook } = require("tapable");
+const { HookMap, SyncHook } = require("../tapable");
 const hookMap = new HookMap(() => new SyncHook(["name", "age"]));
 
 hookMap.for("key1").tap({ name: "tap1" }, (name, age) => {
