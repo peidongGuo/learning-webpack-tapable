@@ -26,8 +26,12 @@ class HookCodeFactory {
     let code = ``;
     code += ` var _context;
             var _x = this._x;
+            var _taps = this.taps;
+            var _interceptors = this.interceptors;
          `;
-
+    for (let index = 0; index < this.options.interceptors.length; index++) {
+      code += ` _interceptors[${index}].call(${this.args()});\n`;
+    }
     return code;
   }
 
@@ -114,13 +118,17 @@ class HookCodeFactory {
 
   callTap(index, onDone) {
     let code = "";
+    code += `var _tap${index} = _taps[${index}];\n`;
+    for (let i = 0; i < this.options.interceptors.length; i++) {
+      code += ` _interceptors[${i}].tap(_tap${i});\n`;
+    }
     switch (this.options.type) {
       case "sync":
-        code = `var _fn${index}=_x[${index}];\n`;
+        code += `var _fn${index}=_x[${index}];\n`;
         code += `_fn${index}(${this.args()});\n`;
         break;
       case "async":
-        code = `var _fn${index}=_x[${index}];\n`;
+        code += `var _fn${index}=_x[${index}];\n`;
         code += `_fn${index}(${this.args()},function(){
             ${onDone}();
         });\n`;

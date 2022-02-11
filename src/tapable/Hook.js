@@ -5,11 +5,14 @@ class Hook {
     }
     this.args = args;
     this.taps = [];
+    this.interceptors = [];
     this.call = CALL_DELEGATE;
     this.callAsync = CALL_ASYNC_DELEGATE;
     this.promise = PROMISE_DELEGATE;
   }
-
+  intercept(interceptor) {
+    this.interceptors.push(interceptor);
+  }
   tap(options, fn) {
     this._tap("sync", options, fn);
   }
@@ -24,7 +27,16 @@ class Hook {
       options = { name: options };
     }
     let tapInfo = { ...options, type, fn };
+    tapInfo = this._runInterceptors(tapInfo);
     this._insert(tapInfo);
+  }
+  _runInterceptors(tapInfo) {
+    let interceptors = this.interceptors;
+    for (let i = 0; i < interceptors.length; i++) {
+      const interceptor = interceptors[i];
+      tapInfo = interceptor.register(tapInfo);
+    }
+    return tapInfo;
   }
   _resetCompilation() {
     this.call = CALL_DELEGATE; // 重置为原始的函数，准备重新编译
@@ -39,6 +51,7 @@ class Hook {
     return this.compile({
       taps: this.taps, // tapInfo 的数组
       args: this.args, // 形参名称的数组
+      interceptors: this.interceptors, // 拦截器
       type, // 钩子的类型
     });
   }
